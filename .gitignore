@@ -1,0 +1,4 @@
+# Access Databases
+*.accdb
+*.laccdb
+*.csv
