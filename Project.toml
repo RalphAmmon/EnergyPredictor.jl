@@ -1,3 +1,8 @@
+name = "ModelWorker"
+uuid = "28d85817-24a3-440c-8918-5e5faabb4cd2"
+authors = ["RalphAmmon <ralph.ammon@bronk-company.com>"]
+version = "0.1.0"
+
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DBInterface = "a10d1c49-ce27-4219-8d33-6db1a4562965"
