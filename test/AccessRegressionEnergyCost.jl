@@ -1,7 +1,7 @@
 using DataFrames, ODBC, DBInterface, GLM
 
 cnxn_str = "Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq="
-db = "test/CostModel.accdb"
+db = "data/CostModel.accdb"
 dsin = "$cnxn_str$db"
 
 conn = ODBC.Connection(dsin)

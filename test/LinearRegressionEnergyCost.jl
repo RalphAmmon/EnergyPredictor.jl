@@ -1,6 +1,6 @@
 using CSV, DataFrames, GLM
 
-trainingData = CSV.read("RegressionExample.csv", DataFrame)
+trainingData = CSV.read("data/RegressionExample.csv", DataFrame)
 
 groups = groupby(trainingData, :FinishedGoodID)
 
@@ -27,4 +27,4 @@ for row in eachrow(modelsDF)
     push!(newEnergyCost, (FinishedGoodID = row.FinishedGoodID, EnergyCost = energyCost[1]))
 end
 
-CSV.write("NewEnergyCost.csv", newEnergyCost)
+CSV.write("data/NewEnergyCost.csv", newEnergyCost)
