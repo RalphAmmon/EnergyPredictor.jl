@@ -1,7 +1,12 @@
-using DataFrames, ODBC, DBInterface, GLM
+using DataFrames, ODBC, DBInterface, Preferences, GLM
+
+uuid = Base.UUID("28d85817-24a3-440c-8918-5e5faabb4cd2")
+accdbFilename = load_preference(uuid, "accdbFileName")
+localDataPath = load_preference(uuid, "localDataPath")
 
 cnxn_str = "Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq="
-db = "data/CostModel.accdb"
+db = joinpath(localDataPath, accdbFilename) 
+# db = "data/CostModel.accdb"
 dsin = "$cnxn_str$db"
 
 conn = ODBC.Connection(dsin)

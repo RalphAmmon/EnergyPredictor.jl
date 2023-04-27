@@ -1,6 +1,9 @@
 # exclude all data
 data/
 
+# local preferences
+LocalPreferences.toml
+
 # Access Databases
 *.accdb
 *.laccdb
