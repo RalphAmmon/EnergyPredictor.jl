@@ -46,6 +46,7 @@ xFields = DBInterface.execute(conn, "SELECT Model_X_FieldID, X_Field FROM Model_
 trainingData = DBInterface.execute(conn, "SELECT * FROM $(modelConfigRow.TrainingDS)") |> DataFrame
 
 groupField = "ModelID"
+weightField = modelConfigRow.WeightField
 groups = groupby(trainingData, :ModelID)
 
 # modelsDF = DataFrame(ModelID=Vector{Int64}(),
@@ -74,7 +75,8 @@ group = first(groups)
 # groupID = group[1, groupField]
 groupID = group.ModelID[1]
 modelVector = fill(groupID, coefSize)
-myLM = lm(modelFormula, group)
+# myLM = lm(modelFormula, group)
+myLM = glm(modelFormula, group, Normal(), IdentityLink(),wts=convert(Vector{Float64},group[:,weightField]))
 coefTbl = coeftable(myLM)
 
 println(groupID)
