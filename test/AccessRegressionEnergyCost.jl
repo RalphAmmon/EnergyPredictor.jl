@@ -17,9 +17,12 @@ groups = groupby(trainingData, :FinishedGoodID)
 modelsDF = DataFrame(FinishedGoodID=Vector{Int64}(),
     LinModel=Vector{}())
 
+modelFormula = term.("EnergyCost") ~ term.(Tuple(["ElectricityPriceBE", "NaturalGasPriceBE", "ElectricityPriceFR", "NaturalGasPriceFR"]))
+
 for group in groups
     println(group.FinishedGoodID[1])
-    push!(modelsDF, (FinishedGoodID=group.FinishedGoodID[1], LinModel=lm(@formula(EnergyCost ~ ElectricityPriceBE + NaturalGasPriceBE + ElectricityPriceFR + NaturalGasPriceFR), group)))
+    # push!(modelsDF, (FinishedGoodID=group.FinishedGoodID[1], LinModel=lm(@formula(EnergyCost ~ ElectricityPriceBE + NaturalGasPriceBE + ElectricityPriceFR + NaturalGasPriceFR), group)))
+    push!(modelsDF, (FinishedGoodID=group.FinishedGoodID[1], LinModel=lm(modelFormula, group)))
 end
 
 currentEnergyPrices = DBInterface.execute(conn, "SELECT * FROM CurrentEnergyPrices") |> DataFrame
