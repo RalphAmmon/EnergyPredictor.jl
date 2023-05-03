@@ -4,7 +4,6 @@ using DataFrames, ODBC, DBInterface, Preferences, GLM
 export my_function, connectDB, fitModels, closeDB, runFitter
 
 function my_function(x)
-    # Your function code here
     return 2 * x
 end
 
@@ -46,14 +45,9 @@ function fitModels(conn::DBInterface.Connection, job::DataFrameRow)
 
     trainingData = DBInterface.execute(conn, "SELECT * FROM $(modelConfigRow.TrainingDS)") |> DataFrame
 
-    # groupField = modelConfigRow.GroupField
     weightField = modelConfigRow.WeightField
     groups = groupby(trainingData, :ModelID)
 
-    # modelsDF = DataFrame(groupField => Vector{Int64}(),
-    # "LinModel" => Vector{}())
-
-    # modelFormula = term.("EnergyCost") ~ term.(Tuple(["ElectricityPriceBE", "NaturalGasPriceBE", "ElectricityPriceFR", "NaturalGasPriceFR"]))
     modelFormula = term.(modelConfigRow.Y_Field) ~ term.(Tuple(xFields.X_Field))
 
 
@@ -76,7 +70,6 @@ function fitModels(conn::DBInterface.Connection, job::DataFrameRow)
         println(groupID)
 
         modelVector = fill(groupID, coefSize)
-        # myLM = lm(modelFormula, group)
         myLM = glm(modelFormula, group, Normal(), IdentityLink(), wts=convert(Vector{Float64}, group[:, weightField]))
         coefTbl = coeftable(myLM)
 
@@ -94,18 +87,6 @@ function fitModels(conn::DBInterface.Connection, job::DataFrameRow)
         )
     end
 
-    # currentEnergyPrices = DBInterface.execute(conn, "SELECT * FROM CurrentEnergyPrices") |> DataFrame
-
-    # currentEnergyCost = DataFrame(groupField => Vector{Int64}(),
-    #     "EnergyCost" => Vector{Float64}())
-
-    # for row in eachrow(modelsDF)
-
-    #     energyCost = predict(row.LinModel, currentEnergyPrices)
-    #     push!(currentEnergyCost, (row[groupField], energyCost[1]))
-    # end
-
-    # DBInterface.execute(conn, "Delete * FROM CurrentEnergyCost")
     DBInterface.execute(conn,
         """DELETE ModelCoefficients.* 
         FROM Models INNER JOIN ModelCoefficients ON Models.ModelID = ModelCoefficients.ModelID 
@@ -113,7 +94,6 @@ function fitModels(conn::DBInterface.Connection, job::DataFrameRow)
     )
 
     for row in eachrow(modelCoefficients)
-
         DBInterface.execute(conn,
             """INSERT INTO ModelCoefficients ( ModelID, Model_X_FieldID, Coef, StdError, t, PrGtAbsT, Lower95Percent, Upper95Percent ) 
             values( 

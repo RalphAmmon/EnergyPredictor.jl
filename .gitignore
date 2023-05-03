@@ -1,6 +1,9 @@
 # exclude all data
 data/
 
+# exclude Jupyter checkpoints
+.ipynb_checkpoints/
+
 # local preferences
 LocalPreferences.toml
 
