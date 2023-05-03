@@ -47,6 +47,7 @@ function fitModels(conn::DBInterface.Connection, job::DataFrameRow)
     trainingData = DBInterface.execute(conn, "SELECT * FROM $(modelConfigRow.TrainingDS)") |> DataFrame
 
     # groupField = modelConfigRow.GroupField
+    weightField = modelConfigRow.WeightField
     groups = groupby(trainingData, :ModelID)
 
     # modelsDF = DataFrame(groupField => Vector{Int64}(),
@@ -75,7 +76,8 @@ function fitModels(conn::DBInterface.Connection, job::DataFrameRow)
         println(groupID)
 
         modelVector = fill(groupID, coefSize)
-        myLM = lm(modelFormula, group)
+        # myLM = lm(modelFormula, group)
+        myLM = glm(modelFormula, group, Normal(), IdentityLink(), wts=convert(Vector{Float64}, group[:, weightField]))
         coefTbl = coeftable(myLM)
 
         modelCoefficients = vcat(modelCoefficients,
