@@ -1,1 +1,1 @@
-Julia .\scripts\StartJupyter.jl
+Julia .\StartJupyter.jl

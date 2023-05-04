@@ -76,8 +76,12 @@ group = first(groups)
 groupID = group.ModelID[1]
 modelVector = fill(groupID, coefSize)
 # myLM = lm(modelFormula, group)
-myLM = glm(modelFormula, group, Normal(), IdentityLink(),wts=convert(Vector{Float64},group[:,weightField]))
+myLM = glm(modelFormula, group, Normal(), IdentityLink(), wts=convert(Vector{Float64}, group[:, weightField]))
 coefTbl = coeftable(myLM)
+
+DBInterface.execute(conn,
+    "UPDATE Models SET Deviance = $(deviance(myLM)), ModelFit = $(myLM.model.fit), FitTS = Now() WHERE (ModelID=$groupID);"
+)
 
 println(groupID)
 # push!(modelsDF, (groupID, lm(modelFormula, group)))
@@ -117,19 +121,19 @@ DBInterface.execute(conn,
 # Debug !!!
 row = first(modelCoefficients)
 for row in eachrow(modelCoefficients)
-    
-    DBInterface.execute(conn, 
-    """INSERT INTO ModelCoefficients ( ModelID, Model_X_FieldID, Coef, StdError, t, PrGtAbsT, Lower95Percent, Upper95Percent ) 
-    values( 
-        $(row.ModelID), 
-        $(row.Model_X_FieldID),
-        $(row.Coef),
-        $(row.StdError),
-        $(row.t),
-        $(row.PrGtAbsT),
-        $(row.Lower95Percent),
-        $(row.Upper95Percent)
-    )"""
+
+    DBInterface.execute(conn,
+        """INSERT INTO ModelCoefficients ( ModelID, Model_X_FieldID, Coef, StdError, t, PrGtAbsT, Lower95Percent, Upper95Percent ) 
+        values( 
+            $(row.ModelID), 
+            $(row.Model_X_FieldID),
+            $(row.Coef),
+            $(row.StdError),
+            $(row.t),
+            $(row.PrGtAbsT),
+            $(row.Lower95Percent),
+            $(row.Upper95Percent)
+        )"""
     )
 end
 # end    

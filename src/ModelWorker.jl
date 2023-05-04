@@ -85,6 +85,10 @@ function fitModels(conn::DBInterface.Connection, job::DataFrameRow)
                 Upper95Percent=coefTbl.cols[6]
             )
         )
+
+        DBInterface.execute(conn,
+            "UPDATE Models SET Deviance = $(deviance(myLM)), ModelFit = $(myLM.model.fit), FitTS = Now() WHERE (ModelID=$groupID);"
+        )
     end
 
     DBInterface.execute(conn,

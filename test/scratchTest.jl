@@ -34,10 +34,20 @@ vcat(mcDF,
     )
 )
 DataFrame(
-   ModelID=modelVector
+    ModelID=modelVector
 )
 
 doLoop = true
 for i in 1:2
-    doLoop=false
+    doLoop = false
 end
+pwd()
+if last(pwd(), 3) == "src"
+    cd("..")
+end
+pwd()
+
+
+tData = DBInterface.execute(conn,
+    "SELECT * FROM ProductionSP"
+) |> DataFrame

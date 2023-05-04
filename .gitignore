@@ -2,7 +2,8 @@
 data/
 
 # exclude Jupyter checkpoints
-.ipynb_checkpoints/
+src/.ipynb_checkpoints/
+*checkpoint.ipynb
 
 # local preferences
 LocalPreferences.toml
